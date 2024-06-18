@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        #map {
+            width: 1050px;
+            height: 666px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Data_1.js"></script>
+        <script src="data/Buffered_2.js"></script>
+        <script>
+          var minMaxValues = {
+    Frequency: { min: Infinity, max: -Infinity },
+    Radius: { min: Infinity, max: -Infinity },
+    'Power Level': { min: Infinity, max: -Infinity }
+};
+
+json_Data_1.features.forEach(function(feature) {
+    minMaxValues.Frequency.min = Math.min(minMaxValues.Frequency.min, parseFloat(feature.properties.Frequency));
+    minMaxValues.Frequency.max = Math.max(minMaxValues.Frequency.max, parseFloat(feature.properties.Frequency));
+    minMaxValues.Radius.min = Math.min(minMaxValues.Radius.min, parseFloat(feature.properties.Radius));
+    minMaxValues.Radius.max = Math.max(minMaxValues.Radius.max, parseFloat(feature.properties.Radius));
+    minMaxValues['Power Level'].min = Math.min(minMaxValues['Power Level'].min, parseFloat(feature.properties['Power Level']));
+    minMaxValues['Power Level'].max = Math.max(minMaxValues['Power Level'].max, parseFloat(feature.properties['Power Level']));
+});
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[19.53209233642377,60.580355008589585],[32.08789093607033,82.65827909211275]]);
+        var hash = new L.Hash(map);
+     
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_Positronretina_0');
+        map.getPane('pane_Positronretina_0').style.zIndex = 400;
+        var layer_Positronretina_0 = L.tileLayer('data/Tiles2/Mapnik/{z}/{x}/{y}.png', {
+            pane: 'pane_Positronretina_0',
+            opacity: 1.0,
+            attribution:'IIT ROPAR EE',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_Positronretina_0;
+        map.addLayer(layer_Positronretina_0);
+        function pop_Data_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Frequency'] !== null ? autolinker.link(feature.properties['Frequency'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Username'] !== null ? autolinker.link(feature.properties['Username'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Radius'] !== null ? autolinker.link(feature.properties['Radius'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Latitude'] !== null ? autolinker.link(feature.properties['Latitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Longitude'] !== null ? autolinker.link(feature.properties['Longitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Time Acquired'] !== null ? autolinker.link(feature.properties['Time Acquired'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Power Level'] !== null ? autolinker.link(feature.properties['Power Level'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Data_1_0() {
+            return {
+                pane: 'pane_Data_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(213,180,60,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Data_1');
+        map.getPane('pane_Data_1').style.zIndex = 401;
+        map.getPane('pane_Data_1').style['mix-blend-mode'] = 'normal';
+        var layer_Data_1 = new L.geoJson(json_Data_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_1',
+            layerName: 'layer_Data_1',
+            pane: 'pane_Data_1',
+            onEachFeature: pop_Data_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Data_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Data_1);
+        map.addLayer(layer_Data_1);
+        function pop_Buffered_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Frequency</th>\
+                        <td class="visible-with-data" id="Frequency">' + (feature.properties['Frequency'] !== null ? autolinker.link(feature.properties['Frequency'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Username</th>\
+                        <td>' + (feature.properties['Username'] !== null ? autolinker.link(feature.properties['Username'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Radius</th>\
+                        <td class="visible-with-data" id="Radius">' + (feature.properties['Radius'] !== null ? autolinker.link(feature.properties['Radius'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Latitude</th>\
+                        <td class="visible-with-data" id="Latitude">' + (feature.properties['Latitude'] !== null ? autolinker.link(feature.properties['Latitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Longitude</th>\
+                        <td class="visible-with-data" id="Longitude">' + (feature.properties['Longitude'] !== null ? autolinker.link(feature.properties['Longitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Time Acquired</th>\
+                        <td class="visible-with-data" id="Time Acquired">' + (feature.properties['Time Acquired'] !== null ? autolinker.link(feature.properties['Time Acquired'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Power Level</th>\
+                        <td class="visible-with-data" id="Power Level">' + (feature.properties['Power Level'] !== null ? autolinker.link(feature.properties['Power Level'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Buffered_2_0() {
+            return {
+                pane: 'pane_Buffered_2',
+                opacity: 1,
+                color: 'rgba(228,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Buffered_2');
+        map.getPane('pane_Buffered_2').style.zIndex = 402;
+        map.getPane('pane_Buffered_2').style['mix-blend-mode'] = 'normal';
+        var layer_Buffered_2 = new L.geoJson(json_Buffered_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Buffered_2',
+            layerName: 'layer_Buffered_2',
+            pane: 'pane_Buffered_2',
+            onEachFeature: pop_Buffered_2,
+            style: style_Buffered_2_0,
+        });
+        bounds_group.addLayer(layer_Buffered_2);
+        map.addLayer(layer_Buffered_2);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_Data_1,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Username'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Frequency": "int","Radius": "int","Power Level": "int"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Frequency = document.createElement("div");
+            div_Frequency.id = "div_Frequency";
+            div_Frequency.className = "slider";
+            document.getElementById("menu").appendChild(div_Frequency);
+            var lab_Frequency = document.createElement('div');
+            lab_Frequency.innerHTML  = 'Frequency (GHz): <span id="val_Frequency"></span>';
+            lab_Frequency.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Frequency);
+            var reset_Frequency = document.createElement('div');
+            reset_Frequency.innerHTML = 'clear filter';
+            reset_Frequency.className = 'filterlabel';
+            lab_Frequency.className = 'filterlabel';
+            reset_Frequency.onclick = function() {
+                sel_Frequency.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Frequency);
+            var sel_Frequency = document.getElementById('div_Frequency');
+            noUiSlider.create(sel_Frequency, {
+                connect: true,
+                start: [17, 99],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: minMaxValues.Frequency.min,
+                max: minMaxValues.Frequency.max,
+                }
+            });
+            sel_Frequency.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Frequency = document.getElementById('val_Frequency');
+            val_Frequency.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Radius = document.createElement("div");
+            div_Radius.id = "div_Radius";
+            div_Radius.className = "slider";
+            document.getElementById("menu").appendChild(div_Radius);
+            var lab_Radius = document.createElement('div');
+            lab_Radius.innerHTML  = 'Radius (m): <span id="val_Radius"></span>';
+            lab_Radius.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Radius);
+            var reset_Radius = document.createElement('div');
+            reset_Radius.innerHTML = 'clear filter';
+            reset_Radius.className = 'filterlabel';
+            lab_Radius.className = 'filterlabel';
+            reset_Radius.onclick = function() {
+                sel_Radius.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Radius);
+            var sel_Radius = document.getElementById('div_Radius');
+            noUiSlider.create(sel_Radius, {
+                connect: true,
+                start: [19000, 88000],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: minMaxValues.Radius.min,
+                max: minMaxValues.Radius.max,
+                }
+            });
+            sel_Radius.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Radius = document.getElementById('val_Radius');
+            val_Radius.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_PowerLevel = document.createElement("div");
+            div_PowerLevel.id = "div_PowerLevel";
+            div_PowerLevel.className = "slider";
+            document.getElementById("menu").appendChild(div_PowerLevel);
+            var lab_PowerLevel = document.createElement('div');
+            lab_PowerLevel.innerHTML  = 'Power Level (dB): <span id="val_PowerLevel"></span>';
+            lab_PowerLevel.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_PowerLevel);
+            var reset_PowerLevel = document.createElement('div');
+            reset_PowerLevel.innerHTML = 'clear filter';
+            reset_PowerLevel.className = 'filterlabel';
+            lab_PowerLevel.className = 'filterlabel';
+            reset_PowerLevel.onclick = function() {
+                sel_PowerLevel.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_PowerLevel);
+            var sel_PowerLevel = document.getElementById('div_PowerLevel');
+            noUiSlider.create(sel_PowerLevel, {
+                connect: true,
+                start: [11, 88],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                  min: minMaxValues['Power Level'].min,
+        max: minMaxValues['Power Level'].max
+                }
+            });
+            sel_PowerLevel.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_PowerLevel = document.getElementById('val_PowerLevel');
+            val_PowerLevel.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+           
+        </script>
+    </body>
+</html>
