@@ -1,0 +1,3 @@
+This project focuses on developing offline maps using QGIS, with an emphasis on visualizing antenna coverage across various locations. The main goal is to create an interactive web map that presents detailed information about each antenna, while also offering users customization and filtering capabilities.
+
+A key challenge lies in building a responsive and interactive map that accurately represents antenna ranges and updates dynamically based on changes in the input CSV data. Another critical aspect is incorporating terrain data—such as Digital Elevation Models (DEMs)—to enable accurate viewshed analysis.
